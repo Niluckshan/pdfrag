@@ -37,3 +37,15 @@ variable "target_tags" {
   type = list(string)
   description = "Network tags to apply firewall rules to (must match VM tags)"
 }
+
+variable "container_image" {
+  type        = string
+  default     = "nginx:alpine"
+  description = "Container image to run on COS"
+}
+
+variable "container_http_port" {
+  type        = number
+  default     = 80
+  description = "Container HTTP port exposed by the image"
+}

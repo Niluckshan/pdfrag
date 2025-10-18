@@ -18,4 +18,12 @@ resource "google_compute_instance" "vm" {
       nat_ip = var.static_nat_ip
     }
   }
+
+  metadata = {
+    enable-oslogin = "TRUE"
+    user-data = templatefile("${path.module}/templates/cloud-init.yaml.tftpl", {
+      image = var.container_image
+      http_port  = var.container_http_port
+    })
+  }
 }
