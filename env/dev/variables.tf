@@ -30,12 +30,12 @@ variable "vm-name" {
 
 variable "start-cron" {
   type = string
-  default = "0 6 * * *"
+  default = "0 6 * * 1-5"
 }
 
 variable "stop-cron" {
   type = string
-  default = "00 20 * * *"
+  default = "00 20 * * 1-5"
 }
 
 variable "static-ip-address" {
