@@ -16,7 +16,7 @@ module "vm" {
   source = "../../modules/vm"
 
   vm-name = var.vm-name
-  static-nat-ip = google_compute_address.static_ip.address
+  static-nat-ip = var.static-ip-address
   network = var.network
   target-tags = local.target-tags
 }
@@ -28,15 +28,6 @@ module "policy" {
   time-zone = var.time-zone
   start-cron = var.start-cron
   stop-cron = var.stop-cron
-}
-
-resource "google_compute_address" "static_ip" {
-  name   = var.static-ip-name
-  region = var.region
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "google_compute_resource_policy_attachment" "off_hours_attach" {

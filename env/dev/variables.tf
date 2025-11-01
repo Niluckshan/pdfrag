@@ -23,11 +23,6 @@ variable "network" {
   default = "default"
 }
 
-variable "static-ip-name" {
-  type = string
-  default = "rag-vm-static-ip"
-}
-
 variable "vm-name" {
   type = string
   default = "rag"
@@ -41,4 +36,10 @@ variable "start-cron" {
 variable "stop-cron" {
   type = string
   default = "00 20 * * *"
+}
+
+variable "static-ip-address" {
+  type = string
+  default = "34.65.97.194"
+  description = "need to be created manually in the same region as the VM"
 }
