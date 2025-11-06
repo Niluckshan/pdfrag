@@ -4,11 +4,11 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import type { UploadedFile } from '../types/files'
-import { uploadPdfWithText, type UploadWithTextResponse } from '../api'   // ⬅️ neu
+import { uploadPdfWithText, type UploadWithTextResponse } from '../api'   
 
 export default function UploadArea({
   onFilesAdded,
-  onTextExtracted,                         // ⬅️ neu
+  onTextExtracted,                         
 }: {
   onFilesAdded: (files: UploadedFile[]) => void
   onTextExtracted?: (payload: UploadWithTextResponse) => void
@@ -37,7 +37,7 @@ export default function UploadArea({
       setIsUploading(true)
       onFilesAdded(files)
 
-      // 👉 Backend: pro Datei hochladen & Text holen
+      // Backend: pro Datei hochladen & Text holen
       // Wir zeigen (nur) das Ergebnis der ersten Datei sofort im Dialog
       const first = files[0]
       const res = await uploadPdfWithText(first)
