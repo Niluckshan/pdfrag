@@ -6,7 +6,7 @@ on:
     tags: [ "v*" ]
 
 concurrency:
-  group: build-mainer
+  group: build-main
   cancel-in-progress: true
 
 jobs:
