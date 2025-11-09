@@ -46,7 +46,7 @@ variable "static-ip-address" {
 
 variable "notify-email" {
   type = string
-  default = "sivanajani@gmail.com"
+  default = "sivanajani@swissntech.ch"
 }
 
 variable "billing-account" {
