@@ -28,16 +28,12 @@ jobs:
         include:
           - name: frontend
             context: ./frontend
-            dockerfile: ./frontend/Dockerfile
+            dockerfile: ./frontend/prod/Dockerfile
             image_suffix: frontend
           - name: backend
             context: ./backend
             dockerfile: ./backend/Dockerfile
             image_suffix: backend
-          - name: nginx
-            context: ./nginx
-            dockerfile: ./nginx/Dockerfile
-            image_suffix: nginx
 
     steps:
       - name: Checkout
