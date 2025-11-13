@@ -18,6 +18,7 @@ module "vm" {
   vm-name = var.vm-name
   static-nat-ip = var.static-ip-address
   network = var.network
+  docker-tag = var.docker-tag
   target-tags = local.target-tags
 }
 

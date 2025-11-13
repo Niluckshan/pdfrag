@@ -1,3 +1,7 @@
+variable "docker-tag" {
+  type = string
+}
+
 variable "network" {
   type = string
 }

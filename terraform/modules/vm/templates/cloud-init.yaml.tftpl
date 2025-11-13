@@ -4,8 +4,39 @@ packages:
   - git
   - docker.io
   - docker-compose-v2
+  - curl
+  - ca-certificates
 
 write_files:
+  - path: /etc/pdfrag.env
+    permissions: "0644"
+    content: |
+      IMAGE_TAG=${image_tag}
+      PROJECT_ID=${project_id}
+      PROJECT_NAME=${project_name}
+
+  - path: /usr/local/bin/artifact-registry-login
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -eu
+
+      # Use the same path as the systemd unit
+      CONFIG_PATH="/run/pdfrag-docker"
+      REGISTRY="https://europe-west6-docker.pkg.dev"
+
+      mkdir -p "$CONFIG_PATH"
+
+      TOKEN="$(curl -s -H "Metadata-Flavor: Google" \
+        http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token \
+        | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')"
+
+      [ -n "$TOKEN" ] || { echo "No access token from metadata server"; exit 1; }
+
+      # Write creds explicitly to CONFIG_PATH (no env var needed)
+      printf '%s' "$TOKEN" | docker --config "$CONFIG_PATH" login \
+        -u oauth2accesstoken --password-stdin "$REGISTRY"
+
   - path: /etc/systemd/system/web.service
     permissions: "0644"
     content: |
@@ -19,15 +50,19 @@ write_files:
       Type=oneshot
       RemainAfterExit=yes
       WorkingDirectory=${app_dir}/${project_name}
-      ExecStart=/usr/bin/docker compose up -d
-      ExecStop=/usr/bin/docker compose down
+      EnvironmentFile=/etc/pdfrag.env
+      Environment=DOCKER_CONFIG=/run/pdfrag-docker
+      ExecStartPre=/usr/local/bin/artifact-registry-login
+      ExecStartPre=/usr/bin/docker compose -f docker-compose.prod.yml --env-file /etc/pdfrag.env pull
+      ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml --env-file /etc/pdfrag.env up -d
+      ExecStop=/usr/bin/docker compose -f docker-compose.prod.yml down
       TimeoutStartSec=0
 
       [Install]
       WantedBy=multi-user.target
 
 runcmd:
-  - mkdir ${app_dir}
+  - mkdir -p ${app_dir}
   - cd ${app_dir}
   - git clone --branch main ${repo_url}
   - systemctl enable --now docker
@@ -35,4 +70,4 @@ runcmd:
   - systemctl enable --now web.service
 
 final_message: |
-      Repository pulled to ${app_dir} from ${repo_url}.
+  Repository pulled to ${app_dir} from ${repo_url}.

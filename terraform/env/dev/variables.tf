@@ -1,3 +1,9 @@
+variable "docker-tag" {
+  type = string
+  default = "latest"
+  description = "give the docker image tag to be used it can be sha, git-version or latest"
+}
+
 variable "project-id" {
   type = string
   default = "project-trial-420614"
