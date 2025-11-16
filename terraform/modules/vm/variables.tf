@@ -35,6 +35,10 @@ variable "vm-name" {
   type = string
 }
 
+variable "zone" {
+  type = string
+}
+
 variable "machine-type" {
   type = string
   default = "e2-medium"
@@ -45,12 +49,8 @@ variable "os-image" {
   default = "ubuntu-os-cloud/ubuntu-2204-lts"
 }
 
-variable "disk-size-gb" {
-  type = number
-  default = 10
-}
-
-variable "disk-type" {
-  type = string
-  default = "pd-standard"
+variable "docker-ssl-disk_name" {
+  type        = string
+  description = "Name of the manually created persistent disk for Docker/nginx ssl data"
+  default     = "docker-ssl-data-disk"
 }

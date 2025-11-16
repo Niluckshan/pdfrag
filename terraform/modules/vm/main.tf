@@ -6,9 +6,13 @@ resource "google_compute_instance" "vm" {
   boot_disk {
     initialize_params {
       image = var.os-image
-      size = var.disk-size-gb
-      type = var.disk-type
     }
+  }
+
+  attached_disk {
+    source = data.google_compute_disk.docker_ss_data.id
+    device_name = var.docker-ssl-disk_name
+    mode = "READ_WRITE"
   }
 
   network_interface {
@@ -33,6 +37,12 @@ resource "google_compute_instance" "vm" {
       image_tag = var.docker-tag
       nginx_proxy_tag = var.nginx-proxy-tag
       acme_companion_tag = var.acme-companion-tag
+      cert_device_name = var.docker-ssl-disk_name
     })
   }
+}
+
+data "google_compute_disk" "docker_ss_data" {
+  name = var.docker-ssl-disk_name
+  zone = var.zone
 }

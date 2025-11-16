@@ -20,11 +20,11 @@ write_files:
             - "80:80"
             - "443:443"
           volumes:
-            - conf:/etc/nginx/conf.d
-            - vhost:/etc/nginx/vhost.d
-            - html:/usr/share/nginx/html
-            - dhparam:/etc/nginx/dhparam
-            - certs:/etc/nginx/certs:ro
+            - /srv/${cert_device_name}/nginx/conf:/etc/nginx/conf.d
+            - /srv/${cert_device_name}/nginx/vhost:/etc/nginx/vhost.d
+            - /srv/${cert_device_name}/nginx/html:/usr/share/nginx/html
+            - /srv/${cert_device_name}/nginx/dhparam:/etc/nginx/dhparam
+            - /srv/${cert_device_name}/nginx/certs:/etc/nginx/certs:ro
             # WARNING: sharing docker.sock has security implications
             - /var/run/docker.sock:/tmp/docker.sock:ro
 
@@ -37,11 +37,13 @@ write_files:
           environment:
             - NGINX_PROXY_CONTAINER=nginx-proxy
             - DEFAULT_EMAIL=sivanajani@swissntech.ch
+            # Uncomment the following line for testing purposes
+            # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
           volumes:
-            - certs:/etc/nginx/certs:rw
-            - acme:/etc/acme.sh
-            - vhost:/etc/nginx/vhost.d
-            - html:/usr/share/nginx/html
+            - /srv/${cert_device_name}/nginx/certs:/etc/nginx/certs:rw
+            - /srv/${cert_device_name}/nginx/acme:/etc/acme.sh
+            - /srv/${cert_device_name}/nginx/vhost:/etc/nginx/vhost.d
+            - /srv/${cert_device_name}/nginx/html:/usr/share/nginx/html
             - /var/run/docker.sock:/var/run/docker.sock:ro
 
         backend:
@@ -118,7 +120,24 @@ write_files:
       [Install]
       WantedBy=multi-user.target
 
+disk_setup:
+  /dev/disk/by-id/google-${cert_device_name}:
+    table_type: gpt
+    layout: true
+    overwrite: false
+
+fs_setup:
+  - label: dockerdata
+    filesystem: ext4
+    device: /dev/disk/by-id/google-${cert_device_name}
+    overwrite: false
+
+mounts:
+  - [ /dev/disk/by-id/google-${cert_device_name}, /srv/${cert_device_name}, auto, "defaults,nofail", "0", "2" ]
+
 runcmd:
+  - mkdir -p /srv/${cert_device_name}
+  - chown -R root:root /srv/${cert_device_name}
   - systemctl enable --now docker
   - systemctl daemon-reload
   - systemctl enable --now web.service

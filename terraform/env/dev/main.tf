@@ -24,6 +24,7 @@ module "vm" {
   target-tags = local.target-tags
   project-name = var.project-name
   project-id = var.project-id
+  zone = var.zone
 }
 
 module "policy" {
@@ -45,8 +46,8 @@ module "billing" {
 }
 
 resource "google_compute_resource_policy_attachment" "off_hours_attach" {
-  name     = module.policy.name
-  project  = var.project-id
-  zone     = var.zone
+  name = module.policy.name
+  project = var.project-id
+  zone = var.zone
   instance = module.vm.name
 }
