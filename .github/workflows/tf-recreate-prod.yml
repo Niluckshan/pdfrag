@@ -1,4 +1,4 @@
-name: Terraform Recreate DEV
+name: Terraform Recreate PROD
 
 on:
   workflow_run:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 concurrency:
-  group: deploy-dev
+  group: deploy-prod
   cancel-in-progress: true
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: terraform/env/dev
+        working-directory: terraform/env/prod
     permissions:
       contents: read
       id-token: write
